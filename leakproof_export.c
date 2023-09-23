@@ -1,4 +1,7 @@
-#include "leakproof_int.h"
+extern int	leakproof_check_storage(void);
+extern void	leakproof_errmsg(void);
+extern int	leakproof_enlarge_storage(void);
+extern int	leakproof_load(void *addr, void (*destroyer)(void *));
 
 void	**leakproof_storage(void)
 {
@@ -7,7 +10,7 @@ void	**leakproof_storage(void)
 	return (&data);
 }
 
-void	leakproof_export(void *data, void (*destroyer)(void *))
+void	leakproof_export(void *addr, void (*destroyer)(void *))
 {
 	int	check;
 
@@ -16,6 +19,6 @@ void	leakproof_export(void *data, void (*destroyer)(void *))
 		return (leakproof_errmsg());
 	else if (check == 1 && leakproof_enlarge_storage())
 		return (leakproof_errmsg());
-	else if (leakproof_load(data, destroyer))
+	else if (leakproof_load(addr, destroyer))
 		return (leakproof_errmsg());
 }

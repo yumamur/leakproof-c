@@ -4,50 +4,43 @@
 
 void	leakproof_init(void)
 {
-	t_storage		*storage;
+	t_lp_storage	*storage;
 	unsigned int	retry;
 
 	retry = 0;
 	while (++retry < 100)
 	{
-		storage = malloc(sizeof(t_storage));
+		storage = malloc(sizeof(t_lp_storage));
 		if (storage)
 			break ;
 	}
 	*leakproof_storage() = storage;
-	*storage = (t_storage){};
+	*storage = (t_lp_storage){};
 	while (++retry < 100)
 	{
-		storage->data = malloc(sizeof(void *) * 2);
-		if (storage->data)
+		storage->load = malloc(sizeof(t_lp_load) * 2);
+		if (storage->load)
 			break ;
 	}
-	while (++retry < 100)
-	{
-		storage->destroyers = malloc(sizeof(void *) * 2);
-		if (storage->destroyers)
-			break ;
-	}
+	*storage->load = (t_lp_load){};
 	storage->cap = 2;
 }
 
 void	leakproof_destroy(void)
 {
-	t_storage	*storage;
+	t_lp_storage	*storage;
 
 	storage = *leakproof_storage();
-	if (!storage)
+	if (!storage || !storage->load)
 		return ;
 	while (storage->size)
 	{
 		--storage->size;
-		((void (*)(void *))storage->destroyers[storage->size]) \
-		(storage->data[storage->size]);
+		storage->load[storage->size].destroyer \
+		(storage->load[storage->size].addr);
 	}
-	if (storage->data)
-		free(storage->data);
-	if (storage->destroyers)
-		free(storage->destroyers);
+	if (storage->load)
+		free(storage->load);
 	free(storage);
 }
 

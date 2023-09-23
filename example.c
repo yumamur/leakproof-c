@@ -44,13 +44,18 @@ void	test1(void)
 		++i;
 	}
 	leakproof_export(test_struct, (t_leakproof)destroyer1);
-
-	test_struct = malloc(1);
+/*	After an 'addr' is loaded into the storage, as in LINE: 46,
+ *	the variable 'addr' is free to use. 
+ */
+	test_struct = malloc(1); // Writing over a pointer to an allocated area
 	leakproof_export(test_struct, free);
 
 	test_ptr = malloc(20 * sizeof(void *));
 	test_ptr[16] = malloc (100);
 	leakproof_export(test_ptr, (t_leakproof)destroyer2);
+
+	test_ptr = malloc(1);
+	leakproof_export(test_ptr, free);
 }
 
 void	test2(void)
