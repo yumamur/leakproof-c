@@ -8,55 +8,71 @@ typedef struct s_struct
 }	t_struct;
 
 // Notice how you can not notice it is called in anywhere
-void	destroyer(t_struct *test)
+void	destroyer1(t_struct *ptr)
 {
 	int	i;
 
 	i = 0;
-	while (i < test->size)
+	while (i < ptr->size)
 	{
-		free(test->arr[i]);
+		free(ptr->arr[i]);
 		++i;
 	}
-	free(test->arr);
-	free(test);
+	free(ptr->arr);
+	free(ptr);
+}
+
+void	destroyer2(void **ptr)
+{
+	free(ptr[16]);
+	free(ptr);
 }
 
 void	test1(void)
 {
-	t_struct	*test;
+	t_struct	*test_struct;
+	void		**test_ptr;
 	int			i;
 
-	test = malloc(sizeof(t_struct));
-	test->size = 50;
-	test->arr = malloc(test->size * sizeof(void *));
+	test_struct = malloc(sizeof(t_struct));
+	test_struct->size = 50;
+	test_struct->arr = malloc(test_struct->size * sizeof(void *));
 	i = 0;
-	while (i < test->size)
+	while (i < test_struct->size)
 	{
-		test->arr[i] = malloc(test->size);
+		test_struct->arr[i] = malloc(test_struct->size);
 		++i;
 	}
-	leakproof_export(test, (t_leakproof)destroyer);
-	test = malloc(1);
-	free(test);
+	leakproof_export(test_struct, (t_leakproof)destroyer1);
+
+	test_struct = malloc(1);
+	leakproof_export(test_struct, free);
+
+	test_ptr = malloc(20 * sizeof(void *));
+	test_ptr[16] = malloc (100);
+	leakproof_export(test_ptr, (t_leakproof)destroyer2);
 }
 
 void	test2(void)
 {
-	t_struct	*test;
+	t_struct	*test_struct;
+	void		**test_ptr;
 	int			i;
 
-	test = malloc(sizeof(t_struct));
-	test->size = 50;
-	test->arr = malloc(test->size * sizeof(void *));
+	test_struct = malloc(sizeof(t_struct));
+	test_struct->size = 50;
+	test_struct->arr = malloc(test_struct->size * sizeof(void *));
 	i = 0;
-	while (i < test->size)
+	while (i < test_struct->size)
 	{
-		test->arr[i] = malloc(test->size);
+		test_struct->arr[i] = malloc(test_struct->size);
 		++i;
 	}
-	test = malloc(1);
-	free(test);
+
+	test_struct = malloc(1);
+
+	test_ptr = malloc(20 * sizeof(void *));
+	test_ptr[16] = malloc (100);
 }
 
 #include <stdio.h>

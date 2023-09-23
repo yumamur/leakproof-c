@@ -1,7 +1,7 @@
 #include "leakproof_int.h"
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
+#include <string.h>
 
 int	leakproof_check_storage(void)
 {
