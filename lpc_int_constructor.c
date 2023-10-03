@@ -1,6 +1,10 @@
-#include "leakproof_int.h"
+#include "lpc_int.h"
 #include <stdlib.h>
 #include <unistd.h>
+
+void	leakproof_init(void) __attribute__((constructor(5)));
+void	leakproof_destroy(void) __attribute__((destructor(5)));
+void	leakproof_constructor(void) __attribute__((constructor(6)));
 
 void	leakproof_init(void)
 {

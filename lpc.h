@@ -42,8 +42,8 @@
  * 	You may find the example.c file quite elucidative.
  */
 
-#ifndef LEAKPROOF_H
-# define LEAKPROOF_H
+#ifndef LPC_H
+# define LPC_H
 
 /*  Type-casting for 'destroyer'. You won't, but might need it.
  */

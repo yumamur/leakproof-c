@@ -1,4 +1,4 @@
-#include "leakproof_int.h"
+#include "lpc_int.h"
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -50,11 +50,4 @@ int	leakproof_load(void *addr, void *destroyer)
 	if (leakproof_check_storage() == 1 && leakproof_enlarge_storage())
 		return (-1);
 	return (0);
-}
-
-void	leakproof_errmsg(void)
-{
-	write(2, "The function you have called is having no memory at the moment.",
-		53);
-	write(2, "Please hold the addresses\n", 26);
 }
