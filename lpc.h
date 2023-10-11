@@ -22,39 +22,14 @@
  *	SOFTWARE.
  */
 
-/*  	Simple (for now) tool of auto-freeing allocated areas.
- *
- *  	The tool is initialized before 'main()' function call. It loads every
- *  'addr'-'destroyer' pair into its internal structure. After 'main()' returns,
- *  the tool calls 'destroyer(addr)' for each pair.
- *
- *  	It is made to be compatible with 42schools projects, the only external
- *  functions needed are:
- *   - malloc();
- *   - free();
- *   - write();
- *   - memcpy();
- *   - memset();
- *  So, they can easily be implemented for projects.
- *
- *	'addr' can refer to any type of data, as long as 'destroyer' is a function,
- * 	which can take 'addr' as the only parameter and successfully de-allocate it.
- * 	You may find the example.c file quite elucidative.
- */
-
 #ifndef LPC_H
 # define LPC_H
 
 /*  Type-casting for 'destroyer'. You won't, but might need it.
  */
-typedef void	(*t_leakproof)(void *);
-//	leakproof_export(addr, (t_leakproof)destroyer);
+typedef void	(*t_lpc_destroyer)(void *);
+//	lpc_export(addr, (t_lpc_destroyer)destroyer);
 
-void	leakproof_export(void *addr, void (*destroyer)(void *));
-/*	'addr' : The address to a dynamically allocated area.
- *	'destroyer' : A function, which can be used to de-allocate 'addr'.
- */
+int	lpc_export(void *addr, ...);
 
-/* void	leakproof_export_priority(int priority, void *addr, void (*destroyer)(void *));
- */
-#endif /* LEAKPROOF_H */
+#endif /* LPC_H */

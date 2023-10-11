@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "leakproof.h"
+#include "../lpc.h"
 
 typedef struct s_struct
 {
@@ -43,19 +43,19 @@ void	test1(void)
 		test_struct->arr[i] = malloc(test_struct->size);
 		++i;
 	}
-	leakproof_export(test_struct, (t_leakproof)destroyer1);
+	lpc_export(test_struct, (t_lpc_destroyer)destroyer1);
 /*	After an 'addr' is loaded into the storage, as in LINE: 46,
  *	the variable 'addr' is free to use. 
  */
 	test_struct = malloc(1); // Writing over a pointer to an allocated area
-	leakproof_export(test_struct, free);
+	lpc_export(test_struct, free);
 
 	test_ptr = malloc(20 * sizeof(void *));
 	test_ptr[16] = malloc (100);
-	leakproof_export(test_ptr, (t_leakproof)destroyer2);
+	lpc_export(test_ptr, (t_lpc_destroyer)destroyer2);
 
 	test_ptr = malloc(1);
-	leakproof_export(test_ptr, free);
+	lpc_export(test_ptr, free);
 }
 
 void	test2(void)
@@ -85,7 +85,7 @@ int	main(void)
 {
 #if __has_feature(address_sanitizer) | __has_feature(leak_sanitizer)
 	test1(); // This will not result in leak
-	test2(); // But this will
+	// test2(); // But this will
 #else
 	printf("Please, compile with '-fsanitize=address' or '-fsanitize=leak' flag\n");
 #endif

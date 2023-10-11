@@ -1,0 +1,22 @@
+NAME
+	lpc_export - something
+
+LIBRARY
+	Leakproof-C Library (liblpc, -llpc)
+
+SYNOPSIS
+	#include <lpc.h>
+
+	int	lpc_export(void *addr);
+	int	lpc_export(void *addr, void (*destroyer)(void *));
+	int	lpc_export(void *addr, void (*destroyer)(void *), int priority);
+
+DESCRIPTION
+	'addr' : An address, which contains the area to be freed via 'destroyer'
+	'destroyer' : A function, which can be used to de-allocate 'addr'
+
+	If 'destroyer' is given 'NULL', 'addr' will be freed via 'free(addr)'
+
+	Optionally, as the 3rd parameter, an integer value between the range of
+	1 to 255 can be given. It might be used afterwards.
+=========================================================================

@@ -1,25 +1,21 @@
-extern int	lpc_int_check_storage(void);
-extern void	lpc_int_errmsg(void);
-extern int	lpc_int_enlarge_storage(void);
-extern int	lpc_int_load(unsigned int priority, void *addr,
-				void (*destroyer)(void *));
+#include "lpc_int.h"
+#include <unistd.h>
 
-void	**lpc_int_storage(void)
+int __attribute__((aligned(16)))	lpc_export(void *addr, ...)
 {
-	static void	*data;
+	__builtin_va_list	arg;
 
-	return (&data);
-}
-
-void	lpc_export(int priority, void *addr, void (*destroyer)(void *))
-{
-	int	check;
-
-	check = lpc_int_check_storage();
-	if (check == -1)
-		return (lpc_int_errmsg());
-	else if (check == 1 && lpc_int_enlarge_storage())
-		return (lpc_int_errmsg());
-	else if (lpc_int_load(priority, addr, destroyer))
-		return (lpc_int_errmsg());
+	if (lpc_int_check_storage() == -1)
+		return (-1);
+	else if (!addr)
+		return (0);
+	__builtin_va_start(arg, addr);
+	if (lpc_int_load(addr, __builtin_va_arg(arg, void *),
+			__builtin_va_arg(arg, int)))
+	{
+		__builtin_va_end(arg);
+		return (-1);
+	}
+	__builtin_va_end(arg);
+	return (0);
 }

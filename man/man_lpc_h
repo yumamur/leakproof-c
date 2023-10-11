@@ -1,0 +1,18 @@
+	Simple (for now) tool of auto-freeing allocated areas.
+
+	The tool is initialized before 'main()' function call. It loads every
+'addr'-'destroyer' pair into its internal structure. After 'main()' returns,
+the tool calls 'destroyer(addr)' for each pair.
+
+	It is made to be compatible with 42schools projects, the only external
+functions needed are:
+ - malloc();
+ - free();
+ - write();
+ - memcpy();
+ - memset();
+So, they can easily be implemented for projects.
+
+'addr' can refer to any type of data, as long as 'destroyer' is a function,
+which can take 'addr' as the only parameter and successfully de-allocate it.
+You may find the example.c file quite elucidative.
