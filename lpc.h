@@ -25,11 +25,6 @@
 #ifndef LPC_H
 # define LPC_H
 
-/*  Type-casting for 'destroyer'. You won't, but might need it.
- */
-typedef void	(*t_lpc_destroyer)(void *);
-//	lpc_export(addr, (t_lpc_destroyer)destroyer);
-
-int	lpc_export(void *addr, ...);
+int	lpc_export(void *addr, ...) __attribute__((aligned(16), sentinel(0, 0)));
 
 #endif /* LPC_H */

@@ -1,11 +1,14 @@
 #include "lpc_int.h"
-#include <unistd.h>
 
-int __attribute__((aligned(16)))	lpc_export(void *addr, ...)
+int	lpc_export(void *addr, ...)
 {
 	__builtin_va_list	arg;
+	int					i;
 
-	if (lpc_int_check_storage() == -1)
+	i = lpc_int_check_storage();
+	if (i == -1)
+		return (-1);
+	else if (i == 1 && lpc_int_enlarge_storage())
 		return (-1);
 	else if (!addr)
 		return (0);

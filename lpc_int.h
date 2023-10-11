@@ -10,9 +10,17 @@
 #  include <string.h>
 # endif
 
-void	lpc_int_errmsg(void);
-void	**lpc_int_storage(void);
-int		lpc_int_check_storage(void);
-int		lpc_int_enlarge_storage(void);
-int		lpc_int_load(void *data, void *function, int priority);
+void		lpc_int_errmsg(void);
+
+void		**lpc_int_storage(void);
+int			lpc_int_check_storage(void);
+int			lpc_int_enlarge_storage(void);
+
+int			lpc_int_load(void *data, void *function, int priority);
+int			lpc_int_load_init(t_lpc_load *load);
+int			lpc_int_enlarge_load(t_lpc_load *load);
+int			lpc_int_new_destroyer(void *destroyer);
+t_lpc_load	*lpc_int_find_destroyer(void *destroyer);
+
+void		lpc_int_add_addr(t_lpc_load *load, void *addr, int priority);
 #endif

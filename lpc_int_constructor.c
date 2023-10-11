@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void	lpc_int_destroy(void) __attribute__((destructor(5)));
-void	lpc_int_constructor(void) __attribute__((constructor(0)));
+void	lpc_int_destroy(void) __attribute__((destructor(101)));
+void	lpc_int_constructor(void) __attribute__((constructor(101)));
 void	lpc_int_load_destroy(t_lpc_load *load);
 
 void	lpc_int_constructor(void)
@@ -29,7 +29,6 @@ void	lpc_int_destroy(void)
 {
 	t_lpc_storage	*storage;
 
-	printf("asd\n");
 	storage = *lpc_int_storage();
 	if (!storage || !storage->load)
 		return ;

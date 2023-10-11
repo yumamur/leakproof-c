@@ -3,25 +3,6 @@
 #include "typeft.h"
 #include <stdlib.h>
 
-t_lpc_load	*lpc_int_find_destroyer(void *destroyer)
-{
-	t_lpc_storage	*ptr;
-	t_uint			i;
-
-	ptr = *lpc_int_storage();
-	if (!ptr)
-		return (NULL);
-	i = 0;
-	while (i < ptr->size)
-	{
-		if (ptr->load[i].destroyer == destroyer)
-			return (&ptr->load[i]);
-		else
-			++i;
-	}
-	return (NULL);
-}
-
 int	lpc_int_load_init(t_lpc_load *load)
 {
 	if (!load)
@@ -32,22 +13,6 @@ int	lpc_int_load_init(t_lpc_load *load)
 		return (-1);
 	load->cap = 2;
 	load->size = 0;
-	return (0);
-}
-
-int	lpc_int_new_destroyer(void *destroyer)
-{
-	t_lpc_storage	*ptr;
-
-	ptr = *lpc_int_storage();
-	if (!ptr)
-		return (-1);
-	if (ptr->size >= ptr->cap - 1)
-		lpc_int_enlarge_storage();
-	if (lpc_int_load_init(&ptr->load[ptr->size]))
-		return (-1);
-	ptr->load[ptr->size].destroyer = destroyer;
-	++ptr->size;
 	return (0);
 }
 
@@ -73,27 +38,6 @@ int	lpc_int_enlarge_load(t_lpc_load *load)
 	return (0);
 }
 
-void	lpc_int_add_addr(t_lpc_load *load, void *addr, int priority)
-{
-	t_uint		i;
-
-	if (priority <= 0 || priority > 255)
-		priority = 255;
-	i = 0;
-	while (i < load->size)
-	{
-		if (load->addr[i].priority > priority)
-			++i;
-		else
-		{
-			memmove(&load->addr[i + 1], &load->addr[i],
-				(load->size - i) * sizeof(t_lpc_addr));
-			load->addr[i] = (t_lpc_addr){addr, priority};
-			return ;
-		}
-	}
-}
-
 int	lpc_int_load(void *addr, void *destroyer, int priority)
 {
 	t_lpc_storage	*ptr;
@@ -102,10 +46,15 @@ int	lpc_int_load(void *addr, void *destroyer, int priority)
 	ptr = *lpc_int_storage();
 	if (!ptr || !addr)
 		return (-1);
+	if (!destroyer)
+		destroyer = free;
 	ld_ptr = lpc_int_find_destroyer(destroyer);
-	if (!ld_ptr && (lpc_int_new_destroyer(destroyer)
-			|| lpc_int_load(addr, destroyer, priority)))
-		return (-1);
+	if (!ld_ptr)
+	{
+		if (lpc_int_new_destroyer(destroyer))
+			return (-1);
+		return (lpc_int_load(addr, destroyer, priority));
+	}
 	if (ld_ptr->size >= ld_ptr->cap - 1
 		&& lpc_int_enlarge_load(ld_ptr))
 		return (-1);
