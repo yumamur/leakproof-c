@@ -1,10 +1,8 @@
 #include "lpc_int.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 void	lpc_int_destroy(void) __attribute__((destructor(101)));
 void	lpc_int_constructor(void) __attribute__((constructor(101)));
-void	lpc_int_load_destroy(t_lpc_load *load);
 
 void	lpc_int_constructor(void)
 {
@@ -15,7 +13,7 @@ void	lpc_int_constructor(void)
 		return ;
 	*lpc_int_storage() = storage;
 	*storage = (t_lpc_storage){};
-	storage->load = malloc(sizeof(t_lpc_load) * 2);
+	storage->load = malloc(sizeof(t_lpc_load) * 4);
 	if (!storage->load)
 	{
 		free(storage);
@@ -23,6 +21,7 @@ void	lpc_int_constructor(void)
 	}
 	*storage->load = (t_lpc_load){};
 	storage->cap = 2;
+	lpc_int_new_destroyer(free);
 }
 
 void	lpc_int_destroy(void)
@@ -33,7 +32,15 @@ void	lpc_int_destroy(void)
 	if (!storage || !storage->load)
 		return ;
 	while (storage->size--)
-		lpc_int_load_destroy(&storage->load[storage->size]);
+	{
+		while (storage->load[storage->size].size--)
+		{
+			storage->load[storage->size].destroyer
+				(storage->load[storage->size].addr
+					[storage->load[storage->size].size].addr);
+		}
+		free(storage->load[storage->size].addr);
+	}
 	if (storage->load)
 		free(storage->load);
 	free(storage);

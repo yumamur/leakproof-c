@@ -1,26 +1,5 @@
 #include "lpc_int.h"
-
-void	lpc_int_add_addr(t_lpc_load *load, void *addr, int priority)
-{
-	t_uint		i;
-
-	if (priority <= 0 || priority > 255)
-		priority = 255;
-	i = 0;
-	while (i <= load->size)
-	{
-		if (load->addr[i].priority > priority)
-			++i;
-		else
-		{
-			memmove(&load->addr[i + 1], &load->addr[i],
-				(load->size - i) * sizeof(t_lpc_addr));
-			load->addr[i] = (t_lpc_addr){addr, priority};
-			++load->size;
-			return ;
-		}
-	}
-}
+#include <stdlib.h>
 
 t_lpc_load	*lpc_int_find_destroyer(void *destroyer)
 {
@@ -55,4 +34,26 @@ int	lpc_int_new_destroyer(void *destroyer)
 	ptr->load[ptr->size].destroyer = destroyer;
 	++ptr->size;
 	return (0);
+}
+
+void	lpc_int_destroy_p(t_lpc_load *load, int p)
+{
+	t_uint	i[2];
+
+	if (!load)
+		return ;
+	i[0] = 0;
+	while (i[0] < load->size && load->addr[i[0]].priority != p)
+		++i[0];
+	if (i[0] == load->size)
+		return ;
+	i[1] = 0;
+	while (load->addr[i[0] + i[1]].priority == p && i[0] + i[1] < load->size)
+		++i[1];
+	while (i[1]--)
+	{
+		load->destroyer(load->addr[i[0] + i[1]].addr);
+		load->addr[i[0] + i[1]] = (t_lpc_addr){};
+		--load->size;
+	}
 }

@@ -45,8 +45,23 @@ void	test1(void)
 	}
 	lpc_export(test_struct, destroyer1, 5, NULL);
 
+	test_struct = malloc(10);
+	lpc_export(test_struct, free, 50, NULL);
+
 	test_struct = malloc(1);
 	lpc_export(test_struct, free, NULL);
+
+	test_struct = malloc(5);
+	lpc_export(test_struct, free, -1, NULL);
+
+	test_struct = malloc(10);
+	lpc_export(test_struct, free, NULL);
+
+	test_struct = malloc(10);
+	lpc_export(test_struct, free, 5, NULL);
+
+	test_struct = malloc(15);
+	lpc_export(test_struct, free, 250, NULL);
 
 	test_ptr = malloc(20 * sizeof(void *));
 	test_ptr[16] = malloc(100);
@@ -95,6 +110,37 @@ int main(void)
 		ptr->size,
 		ptr->cap,
 		ptr->load);
+	while (i < ptr->size)
+	{
+		printf("\tdestroyer  = %p\n"\
+			"\tsize       = %d\n"\
+			"\tcap        = %d\n"\
+			"\taddr       = %p\n",
+			ptr->load[i].destroyer,
+			ptr->load[i].size,
+			ptr->load[i].cap,
+			ptr->load[i].addr);
+		k = 0;
+		while (k < ptr->load[i].size)
+		{
+			printf("\t\taddr     = %p\n"\
+		  		"\t\tpriority = %d\n",
+				ptr->load[i].addr[k].addr,
+				ptr->load[i].addr[k].priority);
+			++k;
+		}
+		++i;
+	}
+	lpc_flush();
+	printf("storage = %p\n"\
+		"size    = %d\n"\
+		"cap     = %d\n"\
+		"load    = %p\n",
+		ptr,
+		ptr->size,
+		ptr->cap,
+		ptr->load);
+	i = 0;
 	while (i < ptr->size)
 	{
 		printf("\tdestroyer  = %p\n"\
