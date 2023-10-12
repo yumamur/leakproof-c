@@ -25,15 +25,6 @@ $(NAME): $(HDR) $(OBJ)
 obj/%.o: %.c
 	@$(CC) $(CFLAGS) -c -fPIC $< -o $@
 
-# $(NAME): $(HDR) $(SRC) | $(OBJ)
-# 	@ar -rcs $(NAME) $(OBJ)
-
-# $(OBJ): $(SRC) create_dir
-# 	@for i in $@; do \
-# 		src_file=$$(echo $$i | sed 's,obj/,,' | sed 's,\.o,\.c,'); \
-# 		$(CC) $(CFLAGS) -c $$src_file -o $$i; \
-# 	done
-
 create_dir:
 	@mkdir -p obj
 
