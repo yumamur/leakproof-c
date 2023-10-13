@@ -61,16 +61,3 @@ int	lpc_int_load(void *addr, void *destroyer, int priority)
 	lpc_int_add_addr(ld_ptr, addr, priority);
 	return (0);
 }
-
-void	lpc_int_load_destroy(t_lpc_load *load)
-{
-	t_uint	i;
-
-	i = 0;
-	while (i < load->size)
-	{
-		load->destroyer(load->addr[i].addr);
-		++i;
-	}
-	free(load->addr);
-}

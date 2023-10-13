@@ -10,7 +10,7 @@ typedef void	(*t_ptr_destroyer)(void *);
 typedef struct s_lpc_addr
 {
 	void	*addr;
-	int		priority : 8;
+	t_uchar	priority;
 }	t_lpc_addr;
 
 typedef struct s_lpc_load
@@ -23,6 +23,7 @@ typedef struct s_lpc_load
 
 typedef struct s_lpc_storage
 {
+	t_ulong		threshhold;
 	t_uint		cap;
 	t_uint		size;
 	t_lpc_load	*load;

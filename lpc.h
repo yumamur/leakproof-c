@@ -25,6 +25,9 @@
 #ifndef LPC_H
 # define LPC_H
 
-int	lpc_export(void *addr, ...) __attribute__((aligned(16), sentinel(0, 0)));
+int		lpc_export(void *addr, ...)
+		__attribute__((aligned(16), sentinel(0, 0)));
+
+int		lpc_flush(void);
 
 #endif /* LPC_H */
