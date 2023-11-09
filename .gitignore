@@ -2,4 +2,4 @@
 *.a
 *.o
 *.out
-./obj/
+build/*

@@ -17,33 +17,38 @@ SRC_INT	=	lpc_int_addr.c \
 			lpc_int_load.c \
 			lpc_int_storage.c
 
-OBJ = $(patsubst %.c, obj/%.o, $(SRC))
-OBJ += $(patsubst %.c, obj/%.o, $(SRC_INT))
+OBJ = $(patsubst %.c, %.o, $(SRC) $(SRC_INT))
 
-.PHONY = all clean fclean re
+BUILD_DIR = build
 
-all: create_dir $(NAME)
+TARGET = $(BUILD_DIR)/lib/$(NAME)
 
-dev: CFLAGS += -fsanitize=address
+.PHONY: all clean fclean re
+.INTERMEDIATE: $(OBJ)
+.SUFFIXES:
+.SILENT:
+
+all: $(TARGET)
+
+dev: CFLAGS += -fsanitize=address -DLPC_DEV=1
 dev: NAME := liblpc-dev.so
-dev: create_dir $(NAME)
+dev: $(TARGET)
 
-$(NAME): $(HDR) $(OBJ)
-	@$(CC) -shared $(CFLAGS) $(OBJ) -o $(NAME)
+$(TARGET): $(OBJ)
+	@mkdir -p $(BUILD_DIR) $(BUILD_DIR)/include $(BUILD_DIR)/lib
+	@$(CC) -shared $(CFLAGS) $(OBJ) -o $(TARGET)
+	@cp $(HDR) $(BUILD_DIR)/include/
 
-obj/%.o: %.c
+%.o: %.c
 	@$(CC) $(CFLAGS) -c -fPIC $< -o $@
 
-create_dir:
-	@mkdir -p obj
-
 clean:
-	@rm -rf obj/
+	@rm -rf $(OBJ)
 
 fclean:
-	@rm -rf obj/ $(NAME) liblpc-dev.so
+	@rm -rf build
 
 re: fclean all
 
 test: all
-	@$(CC) $(CFLAGS)
+	@$(CC) $(CFLAGS) test/main.c -L. $(NAME)
